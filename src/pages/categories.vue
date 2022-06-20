@@ -9,9 +9,9 @@
 
        <h1 class="my-4">Breeds List</h1>
         <div class="list-group">
-          <li class="list-group-item"><router-link to="/shop">All</router-link>
+          <li class="list-group-item"><router-link to="/home">All</router-link>
           <li class="list-group-item" v-for="cat in categories" :key="cat.id">
-            <router-link :to="'/shop/categories/' + cat.value + '/' + cat.id">{{cat.name}}</router-link>
+            <router-link :to="'/home/categories/' + cat.value + '/' + cat.id">{{cat.name}}</router-link>
           </li>
         </div>
         

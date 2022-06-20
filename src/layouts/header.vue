@@ -3,7 +3,7 @@
       <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <router-link class="navbar-brand" to="/shop">Dog Shelter</router-link>
+      <router-link class="navbar-brand" to="/home">Dog Shelter</router-link>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -23,7 +23,7 @@
                   <b>{{ item.name }}</b> | @{{ item.selling_price }}
                 </li>
                 <li class="list-group-item">
-                  <router-link to='/shop/FavouriteList' class="btn btn-success">View All <i class=" fa fa-heart"></i></router-link>
+                  <router-link to='/home/FavouriteList' class="btn btn-success">View All <i class=" fa fa-heart"></i></router-link>
                 </li>
                 </ul>
             </div>
