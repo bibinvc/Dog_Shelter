@@ -2,11 +2,14 @@
   "name": "Dog_Shelter",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://bibinvc.github.io/dog_shelter/",
+
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "deploy": "sh deploy.sh"
+
+    "deploy": "sh deploy.sh",
+      "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+      "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
+      "lint": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -27,7 +30,8 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.5.21",
+    "webpack": "^4.28.4"
   },
   "eslintConfig": {
     "root": true,
