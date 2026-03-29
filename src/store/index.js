@@ -1,15 +1,14 @@
-import Vuex from 'vuex'
 import Vue from 'vue'
+import Vuex from 'vuex'
 
-import products from './Dogs'
-import cart from './FavList'
+import shelter from './shelter'
+import favorites from './favorites'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-    namespaced: true,
-    modules: {
-        products,
-        cart,
-    },
+  modules: {
+    shelter,
+    favorites,
+  },
 })

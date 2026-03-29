@@ -1,118 +1,84 @@
 <template>
-  <div>
-      <!-- Page Content -->
-  <div class="container">
-
-    <div class="row mt-5">
-
-      <div class="col-lg-3">
-
-       <h1 class="my-4">Breeds List</h1>
-        <div class="list-group">
-          <li class="list-group-item"><router-link to="/home">All</router-link>
-          <li class="list-group-item" v-for="cat in categories" :key="cat.id">
-            <router-link :to="'/home/categories/' + cat.value + '/' + cat.id">{{cat.name}}</router-link>
-          </li>
-        </div>
-        
-
+  <div class="container breed-page">
+    <div class="breed-header shadow-sm">
+      <div>
+        <p class="text-uppercase text-muted small mb-2">Breed listing</p>
+        <h1 class="mb-2">{{ category ? category.name : 'Breed not found' }}</h1>
+        <p class="mb-0 text-muted">
+          {{ category ? category.description : 'Return to the main listings to browse all dogs.' }}
+        </p>
       </div>
-      <!-- /.col-lg-3 -->
-
-      <div class="col-lg-9">
-        <div class="row">
-        
-          <div class="col-lg-4 col-md-6 mb-4" v-for="prod in filteredProducts" :key="prod.id">
-            <div class="card h-100">
-              <h4 class="card-title">
-                  <a href="#">{{prod.name}}</a>
-                </h4>
-              <a href="#"><img class="card-img-top" :src="prod.image" alt=""></a>
-              <div class="card-body">
-                
-                <h5 class="text-dec">Breed:&nbsp;{{prod.breed}}</h5>
-                <h5 class="text-dec">Date Of Birth:&nbsp;{{prod.Date_Of_Birth}}</h5>
-                <h5 class="text-dec">Registration:&nbsp;{{prod.Registration}}</h5>
-                <h5 class="text-dec">Age:&nbsp;{{prod.Age}}</h5>
-
-                <p class="card-text">Details:&nbsp;{{prod.Dss}}</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small> 
-                <add-to-cart :productId="prod.id"></add-to-cart>
-              </div>
-            </div>
-          </div> 
-
-        </div>
-        <!-- /.row -->
-
-      </div>
-      <!-- /.col-lg-9 -->
-
-
+      <router-link class="btn btn-outline-secondary mt-3 mt-md-0" to="/">
+        Back to all dogs
+      </router-link>
     </div>
-    <!-- /.row -->
 
-  </div>
-  <!-- /.container -->
+    <div v-if="dogs.length" class="row mt-4">
+      <div
+        v-for="dog in dogs"
+        :key="dog.id"
+        class="col-md-6 col-xl-4 mb-4"
+      >
+        <dog-card :dog="dog" />
+      </div>
+    </div>
+
+    <div v-else class="empty-state shadow-sm mt-4">
+      No dogs are currently listed for this breed.
+    </div>
   </div>
 </template>
 
 <script>
-import AddToCart from '@/components/addToCart.vue'
+import DogCard from '@/components/DogCard.vue'
+
 export default {
-    components: {
-      'add-to-cart': AddToCart,
-    },
-
-    props: {
-      producId: { default: null }
-    },
-
-    data() {
-        return {
-            category_id: this.$route.params.id,
-        }
-    },
-
-    computed: {
-   
-
-    products() {
-      return this.$store.state.products.products
-    },
-
-    categories() {
-      return this.$store.state.products.categories
-    },
-
-    filteredProducts() {
-      return this.products.filter(product => product.category === Number(this.category_id))
-    }
-
+  components: {
+    DogCard,
   },
 
-  created() {
-  
-  },
+  computed: {
+    categoryId() {
+      return Number(this.$route.params.id)
+    },
 
-  methods: {
+    category() {
+      return this.$store.getters['shelter/categoryById'](this.categoryId)
+    },
 
+    dogs() {
+      return this.$store.getters['shelter/dogsByCategory'](this.categoryId)
+    },
   },
 }
 </script>
-<style>
-.card-img-top {
-  width: 250px;
-  height: 250px;
+
+<style scoped>
+.breed-page {
+  padding-top: 24px;
 }
-.card-title {
+
+.breed-header {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-state {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
   text-align: center;
 }
-.text-dec {
-  font-size: 16px;
+
+@media (max-width: 767px) {
+  .breed-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 </style>
-
-

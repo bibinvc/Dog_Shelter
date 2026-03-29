@@ -1,9 +1,16 @@
 import Home from '@/pages/index.vue'
-import Categories from '@/pages/categories.vue'
-import Checkout from '@/pages/FavouriteList.vue'
+import BreedListing from '@/pages/categories.vue'
+import Favorites from '@/pages/FavouriteList.vue'
 
 export default [
-    { path: '/home', component: Home, name: 'home' },
-    { path: '/home/categories/:value/:id', component: Categories, name: 'categories'},
-    { path: '/home/FavouriteList', component: Checkout, name: 'favouritelist'},
+  { path: '/', component: Home, name: 'home' },
+  { path: '/breeds/:slug/:id', component: BreedListing, name: 'breed' },
+  { path: '/favorites', component: Favorites, name: 'favorites' },
+  { path: '/home', redirect: '/' },
+  {
+    path: '/home/categories/:slug/:id',
+    redirect: to => ({ name: 'breed', params: to.params }),
+  },
+  { path: '/home/FavouriteList', redirect: '/favorites' },
+  { path: '*', redirect: '/' },
 ]

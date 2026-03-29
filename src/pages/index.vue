@@ -1,131 +1,138 @@
 <template>
-  <div>
-      <!-- Page Content -->
-  <div class="container">
+  <div class="container shelter-page">
     <div class="row">
+      <aside class="col-lg-3 mb-4">
+        <div class="sidebar-panel shadow-sm">
+          <h1 class="h3">Available Dogs</h1>
+          <p class="text-muted mb-4">
+            {{ dogs.length }} dogs are currently listed for adoption or assessment.
+          </p>
 
-      <div class="col-lg-3">
+          <label class="font-weight-semibold" for="dog-search">Search dogs</label>
+          <input
+            id="dog-search"
+            v-model.trim="searchTerm"
+            type="search"
+            class="form-control mb-4"
+            placeholder="Search by name, breed, or note"
+          >
 
-        <h1 class="my-4">Categories</h1>
-        <div class="list-group">
-          <li class="list-group-item"><router-link to="/home">All</router-link>
-          <li class="list-group-item" v-for="cat in categories" :key="cat.id">
-            <router-link :to="'/home/categories/' + cat.value + '/' + cat.id">{{cat.name}}</router-link>
-          </li>
+          <h2 class="h5">Browse by breed</h2>
+          <div class="list-group list-group-flush">
+            <router-link class="list-group-item list-group-item-action" to="/">
+              All dogs
+            </router-link>
+            <router-link
+              v-for="category in categories"
+              :key="category.id"
+              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+              :to="{ name: 'breed', params: { slug: category.slug, id: category.id } }"
+            >
+              <span>{{ category.name }}</span>
+              <span class="badge badge-light">{{ dogsInCategory(category.id) }}</span>
+            </router-link>
+          </div>
         </div>
-        
+      </aside>
 
-      </div>
-      <!-- /.col-lg-3 -->
+      <section class="col-lg-9">
+        <app-carousel />
 
-      <div class="col-lg-9">
-        <app-carousel></app-carousel>
-
-      <div class="row mt-5">
-      <div class="col-md-6 col-md-offset-3">
-        <form> 
-        </form>
-      </div>
-    </div>
-
-        <div class="row">
-          <div class="col-lg-4 col-md-6 mb-4" v-for="prod in filteredProducts" :key="prod.id">
-            <div class="card h-100">
-              <h4 class="card-title">
-                  <a href="#">{{ prod.name }}</a>
-                </h4>
-              <a href="#"><img class="card-img-top" :src="prod.image" alt=""></a>
-              <div class="card-body">
-                <h5 class="text-dec">Breed:&nbsp;{{prod.breed}}</h5>
-                <h5 class="text-dec">Date Of Birth:&nbsp;{{prod.Date_Of_Birth}}</h5>
-                <h5 class="text-dec">Registration:&nbsp;{{prod.Registration}}</h5>
-                <h5 class="text-dec">Age:&nbsp;{{prod.Age}}</h5>
-                <p class="card-text">Details:&nbsp;{{prod.Dss}}</p>
-              </div>
-              <div class="card-footer">
-                <add-to-cart :productId="prod.id"></add-to-cart>
-              </div>
-            </div>
-          </div> 
-
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+          <div>
+            <h2 class="h4 mb-1">Shelter Listings</h2>
+            <p class="text-muted mb-0">
+              Search across all active dogs and save the ones you want to revisit.
+            </p>
+          </div>
+          <span class="badge badge-info px-3 py-2 mt-3 mt-md-0">
+            {{ filteredDogs.length }} result{{ filteredDogs.length === 1 ? '' : 's' }}
+          </span>
         </div>
-        <!-- /.row -->
 
-      </div>
-      <!-- /.col-lg-9 -->
+        <div v-if="filteredDogs.length" class="row">
+          <div
+            v-for="dog in filteredDogs"
+            :key="dog.id"
+            class="col-md-6 col-xl-4 mb-4"
+          >
+            <dog-card :dog="dog" />
+          </div>
+        </div>
 
-
+        <div v-else class="empty-state shadow-sm">
+          No dogs match your search. Try a breed name or clear the search field.
+        </div>
+      </section>
     </div>
-    <!-- /.row -->
-
-  </div>
-  <!-- /.container -->
   </div>
 </template>
 
 <script>
-import AddToCart from '@/components/addToCart.vue'
 import Carousel from '@/components/carousel.vue'
+import DogCard from '@/components/DogCard.vue'
+
 export default {
-    components: {
-      'add-to-cart': AddToCart,
-      'app-carousel': Carousel,
-    },
+  components: {
+    'app-carousel': Carousel,
+    DogCard,
+  },
 
-    props: {
-      producId: { default: null }
-    },
+  data() {
+    return {
+      searchTerm: '',
+    }
+  },
 
-    data() {
-      return {
-        search_term: '',
-      }
-    },
-
-    computed: {
-
-    products() {
-      return this.$store.state.products.products
-    },
-
+  computed: {
     categories() {
-      return this.$store.state.products.categories
+      return this.$store.getters['shelter/allCategories']
     },
 
-    // returns products filtered with search term. all, if no search.
-    filteredProducts() {
-      // turns search term to lowercase.
-      if(this.search_term === this.search_term.toLowerCase()) {
-        return this.products.filter(prod => {
-        return prod.name.includes(this.search_term)
-      })
-      }else {
-        return this.products.filter(prod => {
-        return prod.name.includes(this.search_term.toLowerCase())
-      })
+    dogs() {
+      return this.$store.getters['shelter/allDogs']
+    },
+
+    filteredDogs() {
+      const term = this.searchTerm.toLowerCase()
+
+      if (!term) {
+        return this.dogs
       }
-      
-    },
 
+      return this.dogs.filter(dog => {
+        return [dog.name, dog.breed, dog.description, dog.status]
+          .join(' ')
+          .toLowerCase()
+          .includes(term)
+      })
+    },
   },
 
   methods: {
- 
+    dogsInCategory(categoryId) {
+      return this.$store.getters['shelter/dogsByCategory'](categoryId).length
+    },
   },
 }
 </script>
 
 <style scoped>
-.card-title {
-  text-transform: capitalize;
+.shelter-page {
+  padding-top: 24px;
 }
-.card-footer {
- text-align: center;
+
+.sidebar-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
 }
-.card-title {
+
+.empty-state {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
   text-align: center;
-}
-.text-dec {
-  font-size: 16px;
+  color: #52606d;
 }
 </style>
